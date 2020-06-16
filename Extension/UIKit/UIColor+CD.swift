@@ -17,7 +17,7 @@ public extension CaamDau where Base: UIColor {
         return self
     }
     
-    public var hex:String {
+    var hex:String {
         let rgba = self.rgba
         let rs:String = String(Int(rgba.0*255), radix: 16)
         let gs:String = String(Int(rgba.1*255), radix: 16)
@@ -25,7 +25,7 @@ public extension CaamDau where Base: UIColor {
         return "#" + rs + gs + bs
     }
     
-    public var rgba:(CGFloat,CGFloat,CGFloat,CGFloat) {
+    var rgba:(CGFloat,CGFloat,CGFloat,CGFloat) {
         var r:CGFloat = 0
         var g:CGFloat = 0
         var b:CGFloat = 0
@@ -34,7 +34,7 @@ public extension CaamDau where Base: UIColor {
         return (r,g,b,a)
     }
     
-    public var alpha:CGFloat {
+    var alpha:CGFloat {
         return self.rgba.3
     }
 }

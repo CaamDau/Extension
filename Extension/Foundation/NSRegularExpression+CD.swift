@@ -109,9 +109,16 @@ public extension CaamDau where Base: NSRegularExpression {
     }
 }
 
-
+/*
 public extension String {
-    func cd_regex(_ pattern:String) -> Bool {
-        return CaamDau.makeRegEx(pattern)?.cd.match(self) ?? false
+    func regex(_ pattern:String) -> Bool {
+        return CaamDau<NSRegularExpression>.makeRegEx(pattern)?.cd.match(self) ?? false
+    }
+}*/
+
+
+public extension CaamDau where Base == String {
+    func regex(_ pattern:String) -> Bool {
+        return CaamDau<NSRegularExpression>.makeRegEx(pattern)?.cd.match(base) ?? false
     }
 }

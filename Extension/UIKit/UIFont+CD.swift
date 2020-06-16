@@ -15,7 +15,7 @@ public extension CaamDau where Base: UIFont {
 }
 
 public extension UIFont {
-    public static var cd_fontFitSizeRatio:CGFloat = 0
+    static var cd_fontFitSizeRatio:CGFloat = 0
     func cd_fit(_ size:CGFloat = UIFont.cd_fontFitSizeRatio) -> UIFont {
         return self.withSize(self.pointSize+size)
     }

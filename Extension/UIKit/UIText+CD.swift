@@ -173,8 +173,8 @@ public extension CaamDau where Base: UITextView {
 
 
 
-//MARK:--- CD_TextDelegate : TextField TextView 的代理 ----------
-public class CD_TextDelegate: NSObject {
+//MARK:--- TextDelegate : TextField TextView 的代理 ----------
+public class UITextDelegate: NSObject {
     
     
     var textFieldEditing:((UITextField, UIControl.Event)->Void)?
@@ -207,7 +207,7 @@ public class CD_TextDelegate: NSObject {
         textViewShouldChangeText = shouldChangeText
     }
 }
-extension CD_TextDelegate: UITextFieldDelegate {
+extension UITextDelegate: UITextFieldDelegate {
     public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         return textFieldShouldChangeCharacters?(textField,range,string) ?? true
     }
@@ -235,7 +235,7 @@ extension CD_TextDelegate: UITextFieldDelegate {
         
     }
 }
-extension CD_TextDelegate: UITextViewDelegate {
+extension UITextDelegate: UITextViewDelegate {
     public func textViewDidChange(_ textView: UITextView) {
         textViewEditing?(textView, .editingChanged)
     }
@@ -278,10 +278,10 @@ extension CD_TextDelegate: UITextViewDelegate {
     }
 }
 
-public protocol CD_TextProtocol:NSObjectProtocol {
+public protocol UITextProtocol:NSObjectProtocol {
     var txt:String {set get}
 }
-extension UITextField: CD_TextProtocol {
+extension UITextField: UITextProtocol {
     public var txt: String {
         get {
             return self.text ?? ""
@@ -291,7 +291,7 @@ extension UITextField: CD_TextProtocol {
         }
     }
 }
-extension UITextView: CD_TextProtocol {
+extension UITextView: UITextProtocol {
     public var txt: String {
         get {
             return self.text
@@ -302,7 +302,7 @@ extension UITextView: CD_TextProtocol {
     }
 }
 
-extension CD_TextDelegate {
+extension UITextDelegate {
     public enum Limit {
         /// 价格 decimal:小数点后位数限制 minus: 是否支持负数
         case tPrice(_ decimal:UInt, _ minus:Bool?)
@@ -316,7 +316,7 @@ extension CD_TextDelegate {
         ///
         case none
         
-        func limitOutput(_ max:Int?, _ textInput:CD_TextProtocol, _ range: NSRange,  _ string: String, _ newText:String) -> Bool {
+        func limitOutput(_ max:Int?, _ textInput:UITextProtocol, _ range: NSRange,  _ string: String, _ newText:String) -> Bool {
             switch self {
             case .tPrice(let decimal, let minus):
                 let minus:Bool = minus ?? false
@@ -337,7 +337,7 @@ extension CD_TextDelegate {
                 if textInput.txt.isEmpty && string != "." {
                     return true
                 }
-                return CD_RegEx.match(newText, pattern: pattern)
+                return RegEx.match(newText, pattern: pattern)
             case .tInt(let zero, let minus):
                 let minus:Bool = minus ?? false
                 var ints = (0..<10).map{$0.stringValue} + [""]
@@ -350,7 +350,7 @@ extension CD_TextDelegate {
                     pattern[1..<1] = "-?"
                 }
                 guard ints.contains(string) else { return false }
-                return CD_RegEx.match(newText, pattern: pattern)
+                return RegEx.match(newText, pattern: pattern)
             case .tLetter(let int, let lower):
                 var pattern = lower==nil ? "^[a-zA-Z]*$" : (lower! ? "^[a-z]*$" : "^[A-Z]*$")
                 if let max = max {
@@ -360,9 +360,9 @@ extension CD_TextDelegate {
                 if int {
                     pattern[2..<2] = "\\d"
                 }
-                return CD_RegEx.match(newText, pattern: pattern)
+                return RegEx.match(newText, pattern: pattern)
             case .tRegEx(let pattern):
-                let bool = CD_RegEx.match(newText, pattern: pattern)
+                let bool = RegEx.match(newText, pattern: pattern)
                 guard bool else { return bool }
                 guard let max = max else { return bool }
                 guard newText.count <= max else { return false }
@@ -374,7 +374,7 @@ extension CD_TextDelegate {
             }
         }
         
-        public func limit(_ max:Int?, textInput:CD_TextProtocol, range: NSRange,  string: String, custom:((_ max:Int?, _ textInput:CD_TextProtocol, _ range: NSRange,  _ string: String, _ newText:String)->Bool)? = nil) -> Bool {
+        public func limit(_ max:Int?, textInput:UITextProtocol, range: NSRange,  string: String, custom:((_ max:Int?, _ textInput:UITextProtocol, _ range: NSRange,  _ string: String, _ newText:String)->Bool)? = nil) -> Bool {
             guard !string.isEmpty else { return true }
             guard let r = Range.init(range, in: textInput.txt) else { return true }
             let new = textInput.txt.replacingCharacters(in: r, with: string)
@@ -389,7 +389,7 @@ extension CD_TextDelegate {
 
 
 
-protocol CDTextInputTraitsProtocol:UITextInputTraits {
+protocol UITextInputTraitsProtocol:UITextInputTraits {
     //func inputTraits()
     
     /*

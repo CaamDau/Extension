@@ -10,11 +10,12 @@
 import Foundation
 
 //MARK:--- 打印 ----------
-var cd_printOpen:Bool = true
+public var cd_printOpen:Bool = true
 #if DEBUG
-public func print_cd(_ items: Any...){
+public func print_cd(_ items: Any..., file:Any = #file, function:Any = #function, line: Any = #line){
     guard cd_printOpen else { return }
     debugPrint("---👉👉👉")
+    debugPrint(file, function, line)
     debugPrint(items)
     debugPrint("----------  👻")
 }
@@ -305,27 +306,27 @@ public struct CD {
         }
     }
     
-    public static func present(_ vc:UIViewController, animated: Bool = true, completion: (() -> Void)? = nil) {
-        CD.visibleVC?.present(vc, animated: animated, completion: completion)
+    public static func present(_ vc:UIViewController, animated: Bool = true, from:UIViewController? = CD.visibleVC, completion: (() -> Void)? = nil) {
+        from?.present(vc, animated: animated, completion: completion)
     }
     
-    public static func dismiss(_ animated: Bool = true, completion: (() -> Void)? = nil) {
-        CD.visibleVC?.dismiss(animated: animated, completion: nil)
+    public static func dismiss(_ animated: Bool = true, from:UIViewController? = CD.visibleVC, completion: (() -> Void)? = nil) {
+        from?.dismiss(animated: animated, completion: nil)
     }
     
-    public static func push(_ vc:UIViewController, animated: Bool = true) {
-        if let nvc = CD.visibleVC?.navigationController {
+    public static func push(_ vc:UIViewController, animated: Bool = true, from:UIViewController? = CD.visibleVC) {
+        if let nvc = from?.navigationController {
             vc.hidesBottomBarWhenPushed = true
             nvc.pushViewController(vc, animated: animated)
         }else{
-            CD.visibleVC?.present(vc, animated: animated, completion: nil)
+            from?.present(vc, animated: animated, completion: nil)
         }
     }
     
-    public static func pop(_ animated: Bool = true) {
-        if let nvc = CD.visibleVC?.navigationController, let _ = nvc.popViewController(animated: animated) {
+    public static func pop(_ animated: Bool = true, from:UIViewController? = CD.visibleVC) {
+        if let nvc = from?.navigationController, let _ = nvc.popViewController(animated: animated) {
         }else{
-            CD.visibleVC?.dismiss(animated: animated, completion: nil)
+            from?.dismiss(animated: animated, completion: nil)
         }
     }
     
@@ -340,5 +341,4 @@ public struct CD {
         let cla:AnyClass? = NSClassFromString(str)
         return cla
     }
-    
 }

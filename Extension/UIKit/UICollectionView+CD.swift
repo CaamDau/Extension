@@ -57,7 +57,7 @@ public extension CaamDau where Base: UICollectionView {
 
 
 public extension CaamDau where Base: UICollectionView {
-    public enum Kind:Int {
+    enum Kind:Int {
         case tHeader = 0
         case tFooter = 1
         
@@ -70,7 +70,7 @@ public extension CaamDau where Base: UICollectionView {
             }
         }
     }
-    public enum View {
+    enum View {
         case tCell(_ cellClass:AnyClass, _ id:String?, _ bundleFrom:String?)
         case tView(_ viewClass:AnyClass, _ id:String?, _ kind:Kind, _ bundleFrom:String?)
         

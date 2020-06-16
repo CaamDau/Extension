@@ -10,12 +10,12 @@
 import Foundation
 import UIKit
 
-public protocol CaamDauTextProtocol {
+public protocol TextProtocol {
     /// T: String、NSAttributedString、UIColor、NSTextAlignment、UIFont、、
     func setText<T>(_ t: T?, _ state:UIControl.State?)
 }
 
-extension CaamDauTextProtocol {
+extension TextProtocol {
     /// T: String、NSAttributedString、UIColor、NSTextAlignment、UIFont、、
     public func setText<T>(_ t: T?, _ state:UIControl.State?){
         switch self {
@@ -84,7 +84,7 @@ extension CaamDauTextProtocol {
 }
 
 
-public extension CaamDau where Base: CaamDauTextProtocol {
+public extension CaamDau where Base: TextProtocol {
     /// T: String、NSAttributedString、UIColor、NSTextAlignment、UIFont、、 state -> button use
     @discardableResult
     func text<T>(_ t: T?, _ state:UIControl.State? = .normal) -> CaamDau {
@@ -93,7 +93,7 @@ public extension CaamDau where Base: CaamDauTextProtocol {
     }
 }
 
-extension UILabel: CaamDauTextProtocol {}
-extension UIButton: CaamDauTextProtocol {}
-extension UITextField: CaamDauTextProtocol {}
-extension UITextView: CaamDauTextProtocol {}
+extension UILabel: TextProtocol {}
+extension UIButton: TextProtocol {}
+extension UITextField: TextProtocol {}
+extension UITextView: TextProtocol {}

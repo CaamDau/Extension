@@ -8,6 +8,7 @@
 
 
 import Foundation
+
 public extension Array {
     /// 数组去重
     func cd_filter<E: Equatable>(_ repeated: (Element) -> E) -> [Element] {
@@ -21,3 +22,4 @@ public extension Array {
         return result
     }
 }
+

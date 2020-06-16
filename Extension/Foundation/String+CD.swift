@@ -2,7 +2,72 @@
 
 
 import Foundation
-import UIKit
+
+extension String: CaamDauCompatible {}
+
+//MARK:---------- base64
+public extension CaamDau where Base == String {
+    /// base64编码
+    var base64Encoding: CaamDau {
+        let data = base.data(using:.utf8)
+        let base64 = data?.base64EncodedString()
+        return base64?.cd ?? self
+    }
+    /// base64解码
+    var base64Decoding: CaamDau {
+        guard let data = Data(base64Encoded: base) else {
+            return self
+        }
+        let str = String(data: data , encoding: .utf8)
+        return str?.cd ?? self
+    }
+}
+//MARK:---------- 汉字转拼音
+public extension CaamDau where Base == String {
+    /// 只转拼音
+    func pinyin(remove diacritics:Bool = true) -> CaamDau {
+        let mutableString = NSMutableString(string: base)
+        CFStringTransform(mutableString  as CFMutableString, nil, kCFStringTransformToLatin, false)
+        if diacritics {
+            CFStringTransform(mutableString, nil, kCFStringTransformStripDiacritics, false)
+        }
+        return String(mutableString).cd
+    }
+    /// 转拼音 取首字母
+    func pinyinFirst(_ clear:Bool = true, capitalized:Bool = true, placeholder:String = "#") -> CaamDau {
+        guard !base.isEmpty else { return placeholder.cd }
+        var f = base
+        if clear {
+            f = f.replacingOccurrences(of: " ", with: "")
+        }
+        guard !f.isEmpty else { return placeholder.cd }
+        f = String(f.first!)
+        f = f.cd.pinyin().build
+        if capitalized {
+            f = f.capitalized
+        }
+        return String(f.first!).cd
+    }
+}
+//MARK:--- 字符串宽高计算 ----------
+public extension CaamDau where Base == String {
+    ///限制最大行数的场景下，计算Label的bounds
+    func size(_ maxWidth: CGFloat, _ font: UIFont, _ maxLine: Int) -> CGSize {
+        return StringSize.shared.calculateSize(withString: base, maxWidth: maxWidth, font: font, maxLine: maxLine)
+    }
+    ///行数不限的场景下，计算Label的bounds
+    func size(_ maxWidth: CGFloat, _ font: UIFont) -> CGSize {
+        return StringSize.shared.calculateSize(withString: base, maxWidth: maxWidth, font: font)
+    }
+    
+    ///限定最大高度的场景下，计算Label的bounds
+    func size(_ maxSize: CGSize, _ font: UIFont) -> CGSize {
+        return StringSize.shared.calculateSize(withString: base, maxSize: maxSize, font: font)
+    }
+}
+
+
+
 
 //MARK:--- 脚本 ----------
 public extension String {
@@ -38,6 +103,10 @@ public extension String {
         }
     }
 }
+
+
+
+
 
 
 extension String{
@@ -96,17 +165,17 @@ public extension String {
 //MARK:--- 字符串宽高计算 ----------
 public extension String {
     ///限制最大行数的场景下，计算Label的bounds
-    func cd_size( maxWidth: CGFloat, _ font: UIFont, _ maxLine: Int) -> CGSize {
-        return CD_StringSize.shared.calculateSize(withString: self, maxWidth: maxWidth, font: font, maxLine: maxLine)
+    func cd_size(_ maxWidth: CGFloat, _ font: UIFont, _ maxLine: Int) -> CGSize {
+        return StringSize.shared.calculateSize(withString: self, maxWidth: maxWidth, font: font, maxLine: maxLine)
     }
     ///行数不限的场景下，计算Label的bounds
     func cd_size(_ maxWidth: CGFloat, _ font: UIFont) -> CGSize {
-        return CD_StringSize.shared.calculateSize(withString: self, maxWidth: maxWidth, font: font)
+        return StringSize.shared.calculateSize(withString: self, maxWidth: maxWidth, font: font)
     }
     
     ///限定最大高度的场景下，计算Label的bounds
     func cd_size(_ maxSize: CGSize, _ font: UIFont) -> CGSize {
-        return CD_StringSize.shared.calculateSize(withString: self, maxSize: maxSize, font: font)
+        return StringSize.shared.calculateSize(withString: self, maxSize: maxSize, font: font)
     }
 }
 
@@ -130,8 +199,8 @@ public extension String {
 
 //MARK:--- 这是私有的 ----------
 // 代码借鉴来源：https://github.com/577528249/StringCalculate
-private class CD_StringSize {
-    static let shared = CD_StringSize()
+private class StringSize {
+    static let shared = StringSize()
     //fontDictionary是一个Dictionary，例如{".SFUIText-Semibold-16.0": {"0":10.3203125, "Z":10.4140625, "国":16.32, "singleLineHeight":19.09375}}，
     //fontDictionary的key是以字体的名字和大小拼接的String，例如".SFUIText-Semibold-16.0"
     //fontDictionary的value是一个Dictionary，存储对应字体的各种字符对应的宽度及字体的单行高度，例如{"0":10.3203125, "Z":10.4140625, "国":16.32, "singleLineHeight":19.09375}
@@ -177,7 +246,7 @@ private class CD_StringSize {
     //限定最大行数的场景下计算Label的bounds
     func calculateSize(withString string: String, maxWidth: CGFloat, font: UIFont, maxLine: Int) -> CGSize {
         let totalWidth: CGFloat = calculateTotalWidth(string: string, font: font)
-        var widthDictionary = fetchWidthDictionaryWith(font)
+        let widthDictionary = fetchWidthDictionaryWith(font)
         let singleLineHeight = widthDictionary["singleLineHeight"]!
         let numsOfLine = ceil(totalWidth/maxWidth)//行数
         let maxLineCGFloat = CGFloat(maxLine)//最大
@@ -189,7 +258,7 @@ private class CD_StringSize {
     //行数不限的场景下计算Label的bounds
     func calculateSize(withString string: String, maxWidth: CGFloat, font: UIFont) -> CGSize {
         let totalWidth: CGFloat = calculateTotalWidth(string: string, font: font)
-        var widthDictionary = fetchWidthDictionaryWith(font)
+        let widthDictionary = fetchWidthDictionaryWith(font)
         let singleLineHeight = widthDictionary["singleLineHeight"]!
         let numsOfLine = ceil(totalWidth/maxWidth)//行数
         let resultwidth = numsOfLine <= 1 ? totalWidth : maxWidth//小于最大宽度时，取实际宽度的值
@@ -199,7 +268,7 @@ private class CD_StringSize {
     //限定最大高度的场景下计算Label的bounds
     func calculateSize(withString string: String, maxSize: CGSize, font: UIFont) -> CGSize {
         let totalWidth: CGFloat = calculateTotalWidth(string: string, font: font)
-        var widthDictionary = fetchWidthDictionaryWith(font)
+        let widthDictionary = fetchWidthDictionaryWith(font)
         let singleLineHeight = widthDictionary["singleLineHeight"]!
         let numsOfLine = ceil(totalWidth/maxSize.width)//行数
         let maxLineCGFloat = floor(maxSize.height/singleLineHeight)
@@ -241,10 +310,10 @@ private class CD_StringSize {
     func fetchWidthDictionaryWith(_ font: UIFont) -> [String: CGFloat] {
         var widthDictionary = [String: CGFloat]()
         let fontKey = "\(font.fontName)-\(font.pointSize)"
-        if let dictionary =  CD_StringSize.shared.fontDictionary[fontKey] {
+        if let dictionary =  StringSize.shared.fontDictionary[fontKey] {
             widthDictionary = dictionary
         } else {
-            widthDictionary = CD_StringSize.shared.createNewFont(font: font)
+            widthDictionary = StringSize.shared.createNewFont(font: font)
         }
         return widthDictionary
     }

@@ -19,6 +19,10 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         tableView.cd.background(.red).estimatedAll()
+        
+        print_cd("123")
+        print_cd("来开噶".cd.pinyin().build)
+        
     }
 }
 

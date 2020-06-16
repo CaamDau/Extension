@@ -11,7 +11,7 @@
 import Foundation
 
 
-public extension CD_RegEx {
+public extension RegEx {
     enum Password {
         /// 弱密码 任意字母、数字、下划线 (不允许有除此之外的字符)
         /// ^\w{6,20}$
@@ -83,7 +83,7 @@ public extension CD_RegEx {
     }
 }
 
-public enum CD_RegEx {
+public enum RegEx {
     /// 纯小写
     case tLower
     
@@ -107,7 +107,7 @@ public enum CD_RegEx {
     case tMobile(_ pattern:String?)
     
     /// 密码
-    case tPassword(_ pattern:CD_RegEx.Password?)
+    case tPassword(_ pattern:RegEx.Password?)
     
     ///Email 默认 ^\w+([-+.]\w+)*@\w+([-.]\w+)*\.([a-z\.]{2,6})$
     /// ^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$
@@ -117,7 +117,7 @@ public enum CD_RegEx {
     case tCode(_ pattern:String?)
     
     ///用户名验证
-    case tUserName(_ pattern:CD_RegEx.Name?)
+    case tUserName(_ pattern:RegEx.Name?)
     
     /// IP地址验证 默认 ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
     case tIP(_ pattern:String?)
@@ -126,7 +126,7 @@ public enum CD_RegEx {
     case tHTML(_ pattern:String?)
     
     /// 身份证号码 默认 中国
-    case tIDCard(_ pattern:CD_RegEx.IDCards?)
+    case tIDCard(_ pattern:RegEx.IDCards?)
     
     /// 价格 默认 "^\d*\.?\d{0,2}$"
     case tPrice(_ pattern:String?)
@@ -153,7 +153,7 @@ public enum CD_RegEx {
         case .tMobile(let p):
             return p ?? "^1[0-9]{7,10}$"
         case .tPassword(let p):
-            return p?.patternValue ?? CD_RegEx.Password.value0.patternValue
+            return p?.patternValue ?? RegEx.Password.value0.patternValue
         case .tEmail(let p):
             return p ?? "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.([a-z\\.]{2,6})$"
         case .tCode(let p):
@@ -176,11 +176,11 @@ public enum CD_RegEx {
     }
 }
 
-public extension CD_RegEx {
+public extension RegEx {
     private static func matchIDCards(_ string:String) -> Bool {
         // 0-5 地区码 440223
         // 6-13 日期 20190000
-        guard string[6..<14].cd_date("yyyyMMdd") != nil else { return false }
+        guard string[6..<14].cd.date("yyyyMMdd") != nil else { return false }
         //guard date < Date() else {return false}
         // 14-18 日期 111X
         return true
@@ -210,34 +210,34 @@ public extension CD_RegEx {
         return (result.0 + result.1) % 10 == 0
     }
     
-    static func match(_ string:String, type:CD_RegEx) -> Bool {
+    static func match(_ string:String, type:RegEx) -> Bool {
         switch type {
         case .tIDCard:
-            guard CD_RegEx.match(string, pattern: type.patternValue) else {
+            guard RegEx.match(string, pattern: type.patternValue) else {
                 return false
             }
-            guard CD_RegEx.matchIDCards(string) else {
+            guard RegEx.matchIDCards(string) else {
                 return false
             }
             return true
         case .tURL:
-            guard CD_RegEx.match(string, pattern: type.patternValue) else {
+            guard RegEx.match(string, pattern: type.patternValue) else {
                 return false
             }
-            guard CD_RegEx.matchURL(string) else {
+            guard RegEx.matchURL(string) else {
                 return false
             }
             return true
         case .tBankCard:
-            guard CD_RegEx.match(string, pattern: type.patternValue) else {
+            guard RegEx.match(string, pattern: type.patternValue) else {
                 return false
             }
-            guard CD_RegEx.matchBankCard(string) else {
+            guard RegEx.matchBankCard(string) else {
                 return false
             }
             return true
         default:
-            return CD_RegEx.match(string, pattern: type.patternValue)
+            return RegEx.match(string, pattern: type.patternValue)
         }
     }
     

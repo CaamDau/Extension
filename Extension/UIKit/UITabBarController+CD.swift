@@ -231,7 +231,7 @@ public extension CaamDau where Base: UITabBar {
                 attributes[key] = value[i]
                 item.setTitleTextAttributes(attributes, for:state)
             }else{
-                item.setTitleTextAttributes([key:value[i]], for:state)
+                item.setTitleTextAttributes([key:value[i]!], for:state)
             }
         }
         return self
@@ -239,7 +239,7 @@ public extension CaamDau where Base: UITabBar {
     
     func getTitle<T>(_ key:NSAttributedString.Key, for state: UIControl.State) -> [T?] {
         let fonts = base.items?.map({ (item) -> T? in
-            guard var attributes = item.titleTextAttributes(for: state) else { return nil }
+            guard let attributes = item.titleTextAttributes(for: state) else { return nil }
             guard let font = attributes[key] as? T else{ return nil }
             return font
         })
@@ -255,7 +255,7 @@ public extension CaamDau where Base: UITabBar {
                 attributes[key] = value[i]
                 item.setBadgeTextAttributes(attributes, for:state)
             }else{
-                item.setBadgeTextAttributes([key:value[i]], for:state)
+                item.setBadgeTextAttributes([key:value[i]!], for:state)
             }
         }
         return self
@@ -264,7 +264,7 @@ public extension CaamDau where Base: UITabBar {
     @available(iOS 10.0, *)
     func getBadge<T>(_ key:NSAttributedString.Key, for state: UIControl.State) -> [T?] {
         let fonts = base.items?.map({ (item) -> T? in
-            guard var attributes = item.badgeTextAttributes(for: state) else { return nil }
+            guard let attributes = item.badgeTextAttributes(for: state) else { return nil }
             guard let font = attributes[key] as? T else{ return nil }
             return font
         })

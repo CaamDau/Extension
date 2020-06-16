@@ -67,7 +67,7 @@ public extension CaamDau where Base: UIImageView {
         var images:[UIImage] = []
         for item in names {
             guard let img = UIImage(named: item) else{
-                assertionFailure("👉👉👉 UIImage(named: \(item))错误，w请检查 names")
+                assertionFailure("👉👉👉 UIImage(named: \(item))错误，请检查 names")
                 continue
             }
             images.append(img)

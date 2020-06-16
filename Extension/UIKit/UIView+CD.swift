@@ -52,13 +52,13 @@ extension CaamDauViewProtocol {
 
 public extension CaamDau where Base: UIView {
     @discardableResult
-    public func add<T>(_ t: T?) -> CaamDau {
+    func add<T>(_ t: T?) -> CaamDau {
         base.addT(t)
         return self
     }
     
     @discardableResult
-    public func append<T:UIView>(_ type:T.Type, _ handler:((T)->Void)?) -> CaamDau {
+    func append<T:UIView>(_ type:T.Type, _ handler:((T)->Void)?) -> CaamDau {
         base.appendView(type, handler)
         return self
     }
@@ -327,7 +327,7 @@ public extension CaamDau where Base: UIView {
         return self
     }
     /// 放射性渐变
-    open class CD_GradientLayer:CALayer {
+    class GradientLayer:CALayer {
         open var point: CGPoint = CGPoint.zero
         open var colorSpace = CGColorSpaceCreateDeviceRGB()
         open var locations:[CGFloat] = [0.0, 1.0]
@@ -344,9 +344,9 @@ public extension CaamDau where Base: UIView {
     }
     /// 背景放射性渐变
     @discardableResult
-    func gradient(layerRadial gradients:[(color:UIColor,location:CGFloat)], point:CGPoint = CGPoint(x: 0, y: 0), radius:CGFloat? = nil, at: UInt32 = 0, updateIndex:Int? = nil, then:((CD_GradientLayer)->Void)? = nil) -> CaamDau {
+    func gradient(layerRadial gradients:[(color:UIColor,location:CGFloat)], point:CGPoint = CGPoint(x: 0, y: 0), radius:CGFloat? = nil, at: UInt32 = 0, updateIndex:Int? = nil, then:((GradientLayer)->Void)? = nil) -> CaamDau {
         
-        func gradient(_ layer:CD_GradientLayer) {
+        func gradient(_ layer:GradientLayer) {
             base.layoutIfNeeded()
             layer.locations = gradients.map{$0.location}
             layer.colors =  Array(gradients.map({ (c) -> [CGFloat] in
@@ -359,9 +359,9 @@ public extension CaamDau where Base: UIView {
             layer.setNeedsDisplay()
         }
         
-        let layers:[CD_GradientLayer] = base.layer.sublayers?.filter{$0.isKind(of: CD_GradientLayer.self)}.map{$0} as? [CD_GradientLayer] ?? []
+        let layers:[GradientLayer] = base.layer.sublayers?.filter{$0.isKind(of: GradientLayer.self)}.map{$0} as? [GradientLayer] ?? []
         if layers.count <= at {
-            let layer = CD_GradientLayer()
+            let layer = GradientLayer()
             gradient(layer)
             base.layer.insertSublayer(layer, at: at)
             then?(layer)
@@ -525,7 +525,7 @@ public extension CaamDau where Base: UIView{
     }
     
     /// 截图
-    public var cutImage:UIImage? {
+    var cutImage:UIImage? {
         base.layoutIfNeeded()
         UIGraphicsBeginImageContextWithOptions(base.frame.size, true, UIScreen.main.scale)
         guard let context = UIGraphicsGetCurrentContext() else {
@@ -543,7 +543,7 @@ public extension CaamDau where Base: UIView{
 
 public extension CaamDau where Base: UIScrollView {
     /// 截长图
-    public var cutImageLong:UIImage? {
+    var cutImageLong:UIImage? {
         base.layoutIfNeeded()
         let savedContentOffset = base.contentOffset
         let savedFrame = base.frame

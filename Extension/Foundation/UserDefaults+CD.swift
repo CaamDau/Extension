@@ -7,7 +7,7 @@
 enum UserDefaulsUser:String {
     case token = "token"
 }
-extension UserDefaulsUser:CD_NotificationProtocol {
+extension UserDefaulsUser:UserDefaultsProtocol {
     var name: String {
         return "user."+self.rawValue
     }
@@ -17,7 +17,7 @@ UserDefaulsUser.token.save("123")
 
 import Foundation
 
-public protocol CaamDauUserDefaultsProtocol {
+public protocol UserDefaultsProtocol {
     var name: String { get }
     var value:Any? {get}
     var object:Any? {get}
@@ -29,9 +29,8 @@ public protocol CaamDauUserDefaultsProtocol {
     func remove()
 }
 
-extension CaamDauUserDefaultsProtocol {
+extension UserDefaultsProtocol {
     public var value:Any? {
-        UserDefaults.standard.object(forKey: name)
         return UserDefaults.standard.object(forKey: name)
     }
     public var object:Any? {
@@ -57,5 +56,30 @@ extension CaamDauUserDefaultsProtocol {
     }
     public func remove() {
         UserDefaults.standard.removeObject(forKey: name)
+    }
+}
+
+extension UserDefaults {
+    public static func value(_ key:String) -> Any? {
+        return UserDefaults.standard.object(forKey: key)
+    }
+    public static func bool(_ key:String) -> Bool {
+        return UserDefaults.standard.bool(forKey: key)
+    }
+    public static func string(_ key:String) -> String? {
+        return UserDefaults.standard.string(forKey: key)
+    }
+    public static func array(_ key:String) -> [Any]? {
+        return UserDefaults.standard.array(forKey: key)
+    }
+    public static func dictionary(_ key:String) -> [String : Any]? {
+        return UserDefaults.standard.dictionary(forKey: key)
+    }
+    public static func save(_ value:Any?, key:String) {
+        UserDefaults.standard.set(value, forKey: key)
+        UserDefaults.standard.synchronize()
+    }
+    public static func remove(_ key:String) {
+        UserDefaults.standard.removeObject(forKey: key)
     }
 }
